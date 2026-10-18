@@ -17,6 +17,9 @@ def save_tasks(tasks: list[dict]) -> None:
 
 
 def add_task(tasks: list[dict], title: str) -> dict:
+    title = title.strip()
+    if not title:
+        raise ValueError("Task title cannot be empty.")
     task = {"id": len(tasks) + 1, "title": title, "done": False}
     tasks.append(task)
     return task
@@ -25,6 +28,10 @@ def add_task(tasks: list[dict], title: str) -> dict:
 if __name__ == "__main__":
     tasks = load_tasks()
     title = input("Task title: ")
-    new_task = add_task(tasks, title)
-    save_tasks(tasks)
-    print(f"Added task {new_task['id']}: {new_task['title']}")
+    try:
+        new_task = add_task(tasks, title)
+    except ValueError as error:
+        print(f"Error: {error}")
+    else:
+        save_tasks(tasks)
+        print(f"Added task {new_task['id']}: {new_task['title']}")
