@@ -25,6 +25,14 @@ def add_task(tasks: list[dict], title: str) -> dict:
     return task
 
 
+def complete_task(tasks: list[dict], task_id: int) -> dict:
+    for task in tasks:
+        if task["id"] == task_id:
+            task["done"] = True
+            return task
+    raise ValueError(f"No task with id {task_id}.")
+
+
 def format_task(task: dict) -> str:
     mark = "x" if task["done"] else " "
     return f"[{mark}] {task['id']}. {task['title']}"
@@ -40,8 +48,8 @@ def list_tasks(tasks: list[dict]) -> None:
 
 def main() -> None:
     tasks = load_tasks()
-    choice = input("Choose (a)dd or (l)ist: ").strip().lower()
-    if choice == "a":
+    choice = input("Choose add, list or done: ").strip().lower()
+    if choice == "add":
         title = input("Task title: ")
         try:
             new_task = add_task(tasks, title)
@@ -50,8 +58,20 @@ def main() -> None:
         else:
             save_tasks(tasks)
             print(f"Added task {new_task['id']}: {new_task['title']}")
-    elif choice == "l":
+    elif choice == "list":
         list_tasks(tasks)
+    elif choice == "done":
+        raw_id = input("Task id: ").strip()
+        if not raw_id.isdigit():
+            print("Error: Task id must be a number.")
+            return
+        try:
+            task = complete_task(tasks, int(raw_id))
+        except ValueError as error:
+            print(f"Error: {error}")
+        else:
+            save_tasks(tasks)
+            print(f"Marked task {task['id']} as done.")
     else:
         print("Unknown choice.")
 
