@@ -25,13 +25,36 @@ def add_task(tasks: list[dict], title: str) -> dict:
     return task
 
 
-if __name__ == "__main__":
+def format_task(task: dict) -> str:
+    mark = "x" if task["done"] else " "
+    return f"[{mark}] {task['id']}. {task['title']}"
+
+
+def list_tasks(tasks: list[dict]) -> None:
+    if not tasks:
+        print("No tasks yet.")
+        return
+    for task in tasks:
+        print(format_task(task))
+
+
+def main() -> None:
     tasks = load_tasks()
-    title = input("Task title: ")
-    try:
-        new_task = add_task(tasks, title)
-    except ValueError as error:
-        print(f"Error: {error}")
+    choice = input("Choose (a)dd or (l)ist: ").strip().lower()
+    if choice == "a":
+        title = input("Task title: ")
+        try:
+            new_task = add_task(tasks, title)
+        except ValueError as error:
+            print(f"Error: {error}")
+        else:
+            save_tasks(tasks)
+            print(f"Added task {new_task['id']}: {new_task['title']}")
+    elif choice == "l":
+        list_tasks(tasks)
     else:
-        save_tasks(tasks)
-        print(f"Added task {new_task['id']}: {new_task['title']}")
+        print("Unknown choice.")
+
+
+if __name__ == "__main__":
+    main()
